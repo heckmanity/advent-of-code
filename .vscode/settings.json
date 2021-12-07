@@ -1,0 +1,37 @@
+{
+    "python.linting.enabled": false,
+    "python.linting.pylintArgs": [
+        "--disable", "E0102",
+        "--disable", "C0111",
+        "--disable", "W0401",
+        "--disable", "C0304",
+        "--disable", "W0614",
+        "--disable", "W0622"
+    ],
+    "cSpell.ignoreWords": [
+        "addr",
+        "contig",
+        "ct",
+        "groupby",
+        "hyps",
+        "ic",
+        "matmul",
+        "mult",
+        "nsew",
+        "paren",
+        "prgm",
+        "range",
+        "reqd",
+        "robo",
+        "vals"
+    ],
+    "cSpell.words": [
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "area",
+        "curr",
+        "disp",
+        "horiz",
+        "prereqs",
+        "stps"
+    ]
+}
