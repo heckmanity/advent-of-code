@@ -18,6 +18,7 @@
         "matmul",
         "mult",
         "nsew",
+        "octo",
         "paren",
         "prgm",
         "range",
