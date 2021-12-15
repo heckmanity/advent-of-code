@@ -1,5 +1,6 @@
 from time import time
 from copy import deepcopy
+from queue import PriorityQueue
 start = time()
 
 class Position:
@@ -13,6 +14,9 @@ class Position:
 
         self.previous = None
         self.neighbors = []
+    
+    def __lt__(self, other):
+        return self.f < other.f
 
     def __repr__(self):
         return self.__str__()
@@ -46,13 +50,12 @@ def get_path(node):
     return list(reversed(path))    
 
 def route(start, end, h):
-    open_set = [start]
+    open_set = PriorityQueue()
+    open_set.put((start.f, start))
     start.f, start.g = 0, 0
 
-    while open_set:
-        open_set = sorted(open_set, key=lambda x: x.f, reverse=True)
-        current = open_set.pop()
-        print(current.row)
+    while not open_set.empty():
+        _, current = open_set.get()
         if current == end:
             return get_path(current)
 
@@ -61,8 +64,8 @@ def route(start, end, h):
                 fork.previous = current
                 fork.g = current.g + fork.risk
                 fork.f = fork.g + h(fork.row, fork.col, NUM_ROWS, NUM_COLS)
-                if not(fork in open_set):
-                    open_set.append(fork)
+                if not(fork in open_set.queue):
+                    open_set.put((fork.f, fork))
 
 #### PART 1
 
