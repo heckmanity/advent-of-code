@@ -1,7 +1,7 @@
-import enum
 from time import time
 from string import digits
 import re
+from itertools import product
 start = time()
 
 with open("2021/inputs/day_18_input.txt") as f:
@@ -14,11 +14,11 @@ class SnailNum:
 
         while not self.reduced:
             self.reduced = self.reduce()
-            print(self.rep_str)
 
         depth = 0
-        if self.rep_str[2] == ',':
-            breakpoint = 2
+        reg_num_at_start = re.match(re.compile(r"""\[\d+,"""), self.rep_str)
+        if reg_num_at_start:
+            breakpoint = reg_num_at_start.span()[1] - 1
         else:
             for i, ch in enumerate(self.rep_str[1:-1]):
                 if ch == '[':
@@ -29,30 +29,32 @@ class SnailNum:
                         breakpoint = i+2
                         break
         
-        # self.left = self.rep_str[1:breakpoint]
-        # if not self.left.count('['):
-        #     self.left = int(self.left)
-        # else:
-        #     self.left = SnailNum(self.left)
+        self.left = self.rep_str[1:breakpoint]
+        if not self.left.count('['):
+            self.left = int(self.left)
+        else:
+            self.left = SnailNum(self.left)
 
-        # self.right = self.rep_str[breakpoint+1:-1]
-        # if not self.right.count('['):
-        #     self.right = int(self.right)
-        # else:
-        #     self.right = SnailNum(self.right)
+        self.right = self.rep_str[breakpoint+1:-1]
+        if not self.right.count('['):
+            self.right = int(self.right)
+        else:
+            self.right = SnailNum(self.right)
         
     def reduce(self):
         depth = 0
         reg_nums = []
-        split_index = None
+        split_index = -1
         for i, ch in enumerate(self.rep_str):
             if ch == '[':
                 depth += 1
             elif ch == ']':
                 depth -= 1
             elif ch in digits:
-                if self.rep_str[i-1] in digits and not split_index:
-                    split_index = len(reg_nums) - 1
+                if self.rep_str[i-1] in digits:
+                    reg_nums[-1] += ch
+                    if split_index < 0:
+                        split_index = len(reg_nums) - 1
                 else:
                     reg_nums.append(ch)
             else:
@@ -62,9 +64,9 @@ class SnailNum:
                 self.explode(len(reg_nums))
                 return False
             
-            if split_index:
-                self.split(split_index)
-                return False
+        if split_index >= 0:
+            self.split(split_index)
+            return False
         
         return True
 
@@ -121,8 +123,6 @@ total = SnailNum(assignment[0])
 for ln in assignment[1:]:
     total = total + SnailNum(ln)
 
-print(str(total))
-
 print(f"\nThe magnitude of the final sum is {abs(total)}")
 print(f"Runtime: {time()-start} seconds")
 
@@ -130,7 +130,12 @@ print(f"Runtime: {time()-start} seconds")
 
 start = time()
 
+best_mag = 0
+for i, j in product(range(len(assignment)), repeat=2):
+    if not i==j:
+        pair_sum = SnailNum(assignment[i]) + SnailNum(assignment[j])
+        if abs(pair_sum) > best_mag:
+            best_mag = abs(pair_sum)
 
-
-# print(f"\nThe value represented by the BITS transmission is {solution}")
+print(f"\nThe largest magnitude of any sum from the assignment is {best_mag}")
 print(f"Runtime: {time()-start} seconds")
